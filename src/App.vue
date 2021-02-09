@@ -54,43 +54,29 @@ export default {
     },
     shipSelected(e) {
       e.preventDefault();
-      console.log("e :>> ", e.target.dataset.position);
-      console.log("object :>> ");
       let position = e.target.dataset.position.split("-");
-      console.log("position :>> ", position);
       let y = position[0];
       let x = position[1];
-      // 0 = free
-      // 1 = taken
-      // if(this.adding) {
-
-      // }
 
       if (this.playerField[y][x] === 0 && this.adding == false) {
-        this.playerField[y][x] = 1;
+        this.playerField[y][x] = 1; // set cell val to one
         this.shipAdding.push([y, x]);
         this.adding = true;
       }
 
-      if (this.adding == true && this.playerField[y][x] != 1) {
-        this.shipAdding.forEach((arr) => {
-          if (arr[0] != y && arr[1] != x) {
-            if (
-              y < arr[0] + 3 &&
-              y > arr[0] - 3 &&
-              x < arr[0] + 3 &&
-              x > arr[0] - 3
-            ) {
-              this.playerField[y][x] = 1;
-              this.shipAdding.push([y, x]);
-            }
-          }
-        });
+      // after placing first block - block all apart from 3x3 +
+      if (
+        this.adding == true &&
+        this.playerField[y][x] != 1 &&
+        (this.shipAdding[0][0] == y || this.shipAdding[0][1] == x) &&
+        y < parseInt(this.shipAdding[0][0]) + 3 &&
+        x < parseInt(this.shipAdding[0][1]) + 3 &&
+        y > parseInt(this.shipAdding[0][0]) - 3 &&
+        x > parseInt(this.shipAdding[0][1]) - 3
+      ) {
+        this.shipAdding.push([y, x]);
+        this.playerField[y][x] = 1;
       }
-      console.log(
-        "this.playerField[position[0],position[1]] :>> ",
-        this.playerField[y][x]
-      );
     }
   },
   data() {
