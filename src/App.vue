@@ -7,6 +7,7 @@
         <div
           @mouseover="moveShip($event)"
           @mouseleave="mouseLeave($event)"
+          @click="placeShip($event)"
           class="cell"
           v-for="(col, x) in row"
           :key="col"
@@ -49,25 +50,33 @@ export default {
   methods: {
     selectShip(e, name) {
       e.preventDefault();
-      this.selectedShip = this.ships[name];
-      console.log(this.selectedShip);
+      this.selectedShipLength = this.ships[name];
+      console.log(this.selectedShipLength);
     },
     moveShip(e) {
       e.preventDefault();
       let position = e.target.dataset.position.split("-");
       let y = position[0];
       let x = position[1];
-      if (y > 0 && y < 9) {
+      console.log("this.selectedShipLength :>> ", this.selectedShipLength);
+      if (y <= 10 - this.selectedShipLength) {
+        // 4 / 2 = 2
+        let mid = Math.floor(this.selectedShipLength / 2);
+        console.log("mid :>> ", mid);
         this.playerField[y][x] = "⚓";
-        this.playerField[parseInt(y) + 1][x] = "⚓";
-        this.playerField[parseInt(y) - 1][x] = "⚓";
+        for (let i = 1; i < this.selectedShipLength; i++) {
+          this.playerField[parseInt(y) + i][x] = "⚓";
+        }
+        // for (let i = 1; i < this.selectedShipLength; i++) {
+        //   this.playerField[parseInt(y) - i][x] = "⚓";
+        // }
+
         this.hoverValues[0] = [y, x];
         console.log("y,x :>> ", y, x);
       }
     },
     mouseLeave(e) {
       e.preventDefault();
-
       for (let i = 0; i < this.playerField.length; i++) {
         for (let j = 0; j < this.playerField.length; j++) {
           if (this.playerField[i][j] == "⚓") {
@@ -75,12 +84,19 @@ export default {
           }
         }
       }
+    },
+    placeShip(e) {
+      e.preventDefault();
+      let position = e.target.dataset.position.split("-");
+      let y = position[0];
+      let x = position[1];
+      console.log("y,x :>> ", y, x);
     }
   },
   data() {
     return {
       ships: { Battleship: 4, Carrier: 5 },
-      selectedShip: {},
+      selectedShipLength: 0,
       hoverValues: [],
       playerField: [
         ["", "", "", "", "", "", "", "", "", ""],
