@@ -5,7 +5,7 @@
     <div class="player field">
       <div class="row" v-for="(row, y) in playerField" :key="y">
         <div
-          @mouseover="placeShip($event)"
+          @mouseover="moveShip($event)"
           @mouseleave="mouseLeave($event)"
           class="cell"
           v-for="(col, x) in row"
@@ -19,7 +19,7 @@
     <div>
       <button>Start new game</button>
       <p>Your turn</p>
-      <div>Click on ship to place:</div>
+      <div>Click on ship to move:</div>
       <div
         @click="selectShip($event, name)"
         class="ship"
@@ -52,28 +52,33 @@ export default {
       this.selectedShip = this.ships[name];
       console.log(this.selectedShip);
     },
-    placeShip(e) {
+    moveShip(e) {
       e.preventDefault();
       let position = e.target.dataset.position.split("-");
       let y = position[0];
       let x = position[1];
       if (y > 0 && y < 9) {
-        this.playerField[y][x] = 1;
-        this.playerField[parseInt(y) + 1][x] = 1;
-        this.playerField[parseInt(y) - 1][x] = 1;
+        this.playerField[y][x] = "⚓";
+        this.playerField[parseInt(y) + 1][x] = "⚓";
+        this.playerField[parseInt(y) - 1][x] = "⚓";
+        this.hoverValues[0] = [y, x];
         console.log("y,x :>> ", y, x);
       }
     },
     mouseLeave(e) {
       e.preventDefault();
-      let position = e.target.dataset.position.split("-");
-      let y = position[0];
-      let x = position[1];
-      if (y > 0 && y < 9) {
-        this.playerField[y][x] = 0;
-        this.playerField[parseInt(y) + 1][x] = 0;
-        this.playerField[parseInt(y) - 1][x] = 0;
-        console.log("y,x :>> ", y, x);
+      // let position = e.target.dataset.position.split("-");
+      // let y = this.hoverValues[0][0];
+      // let x = this.hoverValues[0][1];
+      // this.playerField[y][x] = 0;
+      // this.playerField[parseInt(y) + 1][x] = 0;
+      // this.playerField[parseInt(y) - 1][x] = 0;
+      for (let i = 0; i < this.playerField.length; i++) {
+        for (let j = 0; j < this.playerField.length; j++) {
+          if (this.playerField[i][j] == "⚓") {
+            this.playerField[i][j] = "";
+          }
+        }
       }
     }
   },
@@ -81,17 +86,18 @@ export default {
     return {
       ships: { Battleship: 4, Carrier: 5 },
       selectedShip: {},
+      hoverValues: [],
       playerField: [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ["", "", "", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", "", "", ""]
       ],
       playerShips: [
         [2, 4],
