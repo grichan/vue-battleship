@@ -5,7 +5,8 @@
     <div class="player field">
       <div class="row" v-for="(row, y) in playerField" :key="y">
         <div
-          @click="shipSelected($event)"
+          @mouseover="placeShip($event)"
+          @mouseleave="mouseLeave($event)"
           class="cell"
           v-for="(col, x) in row"
           :key="col"
@@ -20,14 +21,13 @@
       <p>Your turn</p>
       <div>Click on ship to place:</div>
       <div
-        @click="shipSelected($event)"
+        @click="selectShip($event, name)"
         class="ship"
-        v-for="ship in playerShips"
-        :key="ship"
-        :data-ship="ship[0] + '-' + ship[1]"
+        v-for="(length, name) in ships"
+        :key="name"
       >
-        {{ ship[0] }}x{{ ship[1] }}
-        <span v-for="i in ship[0]" :key="i">
+        {{ name }}
+        <span v-for="i in length" :key="i">
           🚢
         </span>
       </div>
@@ -47,42 +47,40 @@ export default {
   name: "App",
   components: {},
   methods: {
-    placeShip(e) {
+    selectShip(e, name) {
       e.preventDefault();
-      console.log("e :>> ", e.target.dataset.position);
-      console.log("object :>> ");
+      this.selectedShip = this.ships[name];
+      console.log(this.selectedShip);
     },
-    shipSelected(e) {
+    placeShip(e) {
       e.preventDefault();
       let position = e.target.dataset.position.split("-");
       let y = position[0];
       let x = position[1];
-
-      if (this.playerField[y][x] === 0 && this.adding == false) {
-        this.playerField[y][x] = 1; // set cell val to one
-        this.shipAdding.push([y, x]);
-        this.adding = true;
-      }
-
-      // after placing first block - block all apart from 3x3 +
-      if (
-        this.adding == true &&
-        this.playerField[y][x] != 1 &&
-        (this.shipAdding[0][0] == y || this.shipAdding[0][1] == x) &&
-        y < parseInt(this.shipAdding[0][0]) + 3 &&
-        x < parseInt(this.shipAdding[0][1]) + 3 &&
-        y > parseInt(this.shipAdding[0][0]) - 3 &&
-        x > parseInt(this.shipAdding[0][1]) - 3
-      ) {
-        this.shipAdding.push([y, x]);
+      if (y > 0 && y < 9) {
         this.playerField[y][x] = 1;
+        this.playerField[parseInt(y) + 1][x] = 1;
+        this.playerField[parseInt(y) - 1][x] = 1;
+        console.log("y,x :>> ", y, x);
+      }
+    },
+    mouseLeave(e) {
+      e.preventDefault();
+      let position = e.target.dataset.position.split("-");
+      let y = position[0];
+      let x = position[1];
+      if (y > 0 && y < 9) {
+        this.playerField[y][x] = 0;
+        this.playerField[parseInt(y) + 1][x] = 0;
+        this.playerField[parseInt(y) - 1][x] = 0;
+        console.log("y,x :>> ", y, x);
       }
     }
   },
   data() {
     return {
-      adding: false,
-      shipAdding: [],
+      ships: { Battleship: 4, Carrier: 5 },
+      selectedShip: {},
       playerField: [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
