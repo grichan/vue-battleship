@@ -2,7 +2,7 @@
   <header>Battleship Game 🚢</header>
   <div class="main">
     <!-- {{ playerField }} -->
-    <div class="player field">
+    <div class="player field" @mouseleave="mouseLeave($event)">
       <div class="row" v-for="(row, y) in playerField" :key="y">
         <div
           @mouseover="moveShip($event)"
@@ -16,6 +16,7 @@
           {{ col }}
         </div>
       </div>
+      <button @click="rotateShip()">Rotate</button>
     </div>
     <div>
       <button>Start new game</button>
@@ -58,12 +59,13 @@ export default {
       let position = e.target.dataset.position.split("-");
       let y = position[0];
       let x = position[1];
-      console.log("this.selectedShipLength :>> ", this.selectedShipLength);
-      if (y <= 10 - this.selectedShipLength) {
+
+      if (y < 10 - this.selectedShipLength + 1 && this.selectedShipLength > 0) {
         // 4 / 2 = 2
         let mid = Math.floor(this.selectedShipLength / 2);
         console.log("mid :>> ", mid);
         this.playerField[y][x] = "⚓";
+
         for (let i = 1; i < this.selectedShipLength; i++) {
           this.playerField[parseInt(y) + i][x] = "⚓";
         }
@@ -72,7 +74,6 @@ export default {
         // }
 
         this.hoverValues[0] = [y, x];
-        console.log("y,x :>> ", y, x);
       }
     },
     mouseLeave(e) {
@@ -92,6 +93,9 @@ export default {
       let x = position[1];
       console.log("y,x :>> ", y, x);
     }
+  },
+  rotateShip() {
+    console.log('"roteShip" :>> ', "roteShip");
   },
   data() {
     return {
