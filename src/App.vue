@@ -13,7 +13,9 @@
           :key="col"
           :data-position="y + '-' + x"
         >
-          {{ col }}
+          <div class="overlay">
+            {{ col }}
+          </div>
         </div>
       </div>
       <button @click="rotateShip()">Rotate</button>
@@ -52,31 +54,14 @@ export default {
     selectShip(e, name) {
       e.preventDefault();
       this.selectedShipLength = this.ships[name];
+
       console.log(this.selectedShipLength);
     },
     moveShip(e) {
       e.preventDefault();
-      let position = e.target.dataset.position.split("-");
-      let y = position[0];
-      let x = position[1];
-      console.log("y,x :>> ", y, x);
-
-      if (y < 10 - this.selectedShipLength + 1 && this.selectedShipLength > 0) {
-        // 4 / 2 = 2
-        let mid = Math.floor(this.selectedShipLength / 2);
-        console.log("mid :>> ", mid);
-        this.playerField[y][x] === "🚢"
-          ? null
-          : (this.playerField[y][x] = "⚓");
-
-        for (let i = 1; i < this.selectedShipLength; i++) {
-          if (this.playerField[parseInt(y) + i][x] !== "🚢") {
-            this.playerField[parseInt(y) + i][x] = "⚓";
-          }
-        }
-        // for (let i = 1; i < this.selectedShipLength; i++) {
-        //   this.playerField[parseInt(y) - i][x] = "⚓";
-        // }
+      console.log("e.target :>> ", e.target.className);
+      if (e.target.className == "overlay") {
+        e.target.style.height = 30 * this.selectedShipLength + "px";
       }
     },
     mouseLeave(e) {
@@ -84,7 +69,7 @@ export default {
       for (let i = 0; i < this.playerField.length; i++) {
         for (let j = 0; j < this.playerField.length; j++) {
           if (this.playerField[i][j] == "⚓") {
-            this.playerField[i][j] = "";
+            this.playerField[i][j] = " ";
           }
         }
       }
@@ -95,25 +80,36 @@ export default {
       let y = position[0];
       let x = position[1];
 
-      // if y
-      this.playerField[y][x] = "🚢";
-      this.playerField[y][parseInt(x) - 1] = "🌊";
-      this.playerField[y][parseInt(x) + 1] = "🌊";
-      this.playerField[parseInt(y) - 1][parseInt(x) + 1] = "🌊";
-      this.playerField[parseInt(y) - 1][parseInt(x) - 1] = "🌊";
-      this.playerField[parseInt(y) - 1][parseInt(x)] = "🌊";
-      this.playerField[parseInt(y) + this.selectedShipLength][parseInt(x) + 1] =
-        "🌊";
-      this.playerField[parseInt(y) + this.selectedShipLength][parseInt(x) - 1] =
-        "🌊";
-      this.playerField[parseInt(y) + this.selectedShipLength][parseInt(x)] =
-        "🌊";
-
-      for (let i = 1; i < this.selectedShipLength; i++) {
-        this.playerField[parseInt(y) + i][x] = "🚢";
-        this.playerField[parseInt(y) + i][parseInt(x) + 1] = "🌊";
-        this.playerField[parseInt(y) + i][parseInt(x) - 1] = "🌊";
+      if (this.playerField[y][x] == "🚢" || this.playerField[y][x] == "🌊") {
+        return;
       }
+
+      // // if y
+      // this.playerField[y][x] = "🚢";
+      // for (let i = 1; i < this.selectedShipLength; i++) {
+      //   this.playerField[parseInt(y) + i][x] = "🚢";
+      //   if (x < 9) {
+      //     this.playerField[parseInt(y) + i][parseInt(x) + 1] = "🌊";
+      //   }
+      //   if (x > 0) {
+      //     this.playerField[parseInt(y) + i][parseInt(x) - 1] = "🌊";
+      //   }
+      // }
+      // if (x < 9 && x > 0) {
+      //   this.playerField[y][parseInt(x) - 1] = "🌊";
+      //   this.playerField[y][parseInt(x) + 1] = "🌊";
+      //   this.playerField[parseInt(y) - 1][parseInt(x) + 1] = "🌊";
+      //   this.playerField[parseInt(y) - 1][parseInt(x) - 1] = "🌊";
+      //   this.playerField[parseInt(y) - 1][parseInt(x)] = "🌊";
+      //   this.playerField[parseInt(y) + this.selectedShipLength][
+      //     parseInt(x) + 1
+      //   ] = "🌊";
+      //   this.playerField[parseInt(y) + this.selectedShipLength][
+      //     parseInt(x) - 1
+      //   ] = "🌊";
+      //   this.playerField[parseInt(y) + this.selectedShipLength][parseInt(x)] =
+      //     "🌊";
+      // }
     },
     rotateShip() {
       console.log('"roteShip" :>> ', "roteShip");
@@ -171,8 +167,19 @@ export default {
 .cell {
   /* margin: 1px; */
   height: 30px;
+  pointer-events: auto;
   width: 30px;
   background-color: rgb(240, 255, 253);
+}
+
+.overlay {
+  height: 120px;
+}
+
+.cell:hover > .overlay {
+  background-color: red;
+  position: relative;
+  pointer-events: none;
 }
 
 .enemy .cell {
